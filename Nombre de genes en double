@@ -1,0 +1,11 @@
+# importer un fichier avec des noms de gènes
+nom<-read.csv('/Users/therese/Documents/ENS/L3/S2/Open science/liste_nom_gene.csv')
+
+summary(nom)
+nombis=unique(nom)
+summary(nombis)
+
+## résultat
+# nombre initiale de genes dans le tableau=5785
+# nombre de ligne unique=4122
+# nombre de doublon= 1663 
