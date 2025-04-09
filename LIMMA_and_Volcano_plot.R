@@ -1,6 +1,7 @@
 library(GEOquery)
 library(limma)
 library(data.table)
+library(EnhancedVolcano)
 
 list.ds <- c("GSE110224","GSE35279","GSE23878","GSE9348")
 list.gsms <- c("0101010101010101010101010101010101",
@@ -57,14 +58,13 @@ write.table(tT, file=paste0("/home/claire/Documents/ULM/L3/open_science/projet/o
 ##################################################################################################
 #                                        Volcano Plot                                            #
 ##################################################################################################
-library(EnhancedVolcano)
+
 
 
 res1 <- fread(paste0("/home/claire/Documents/ULM/L3/open_science/projet/output_limma/",ds,".top.table.csv"), header=TRUE)
 
+png(paste0('/home/claire/Documents/ULM/L3/open_science/projet/output_limma/',ds,'.png'),width = 900, height = 480, units = "px")
 
-png(paste0('/home/claire/Documents/ULM/L3/open_science/projet/output_limma/',ds,'.png'),
-    width = 900, height = 480, units = "px")
 
 EnhancedVolcano(res1,
                      lab = res1$Gene.symbol,
@@ -91,3 +91,39 @@ EnhancedVolcano(res1,
 
 dev.off() 
 
+
+# RNA-Seq -----------------------------------------------------------------
+
+
+res2 <- fread("/home/claire/Documents/ULM/L3/open_science/projet/metastase/GSE50760_cancer.top.table.tsv")
+
+geneF<-fread('/home/claire/Documents/ULM/L3/open_science/projet/metastase/liver_genes.txt' ) # les genes suprexpirmmer dans le foie
+genesFS <- geneF[,Gene_Symbol]
+res2<-res2[!(Symbol %in% genesFS),]
+
+png(paste0('/home/claire/Documents/ULM/L3/open_science/projet/metastase/genes_controle_cancer.png'),
+    width = 900, height = 480, units = "px")
+
+EnhancedVolcano(res2,
+                lab = res2$Symbol,
+                x = 'log2FoldChange',
+                y = "padj",
+                selectLab = c('CXCL8','CEMIP','MMP7','CA4','ADH1C','GUCA2A',
+                              'GUCA2B','ZG16','CLCA4','MS4A12','CLDN1'),
+                pCutoff = 0.05,
+                FCcutoff = 1,
+                pointSize = 2.0,
+                labSize = 3.0,
+                labCol = 'black',
+                labFace = 'plain',
+                boxedLabels = TRUE,
+                colAlpha = 4/5,
+                legendPosition = 'right',
+                legendLabSize = 14,
+                legendIconSize = 4.0,
+                drawConnectors = TRUE,
+                widthConnectors = 1.0,
+                colConnectors = 'black',
+                title = "cancer vs controle")
+
+dev.off() 
